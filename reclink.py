@@ -40,21 +40,21 @@ def process_args(args):
     help_message = """reclink - link files recursively
 -r, --replace               replace existing targets
 -l, --links                 link to softlinks
+-q, --quiet                 skip user confirmation
 -s, --source {{PATH}}       path to source directory
 -t, --target {{PATH}}       path to target directory
 -i, --ignore {{PATH,PATH}}  relative paths to be ignored
--q, --quiet                 skip user confirmation
 -h, --help                  display this help message and exit
 -v, --version               display version message and exit"""
     try:
         opts, _ = getopt.getopt(args,
-                                "rls:t:i:qhv",
+                                "rlqs:t:i:hv",
                                 ["replace",
                                  "links",
+                                 "quiet",
                                  "source=",
                                  "target=",
                                  "ignore=",
-                                 "quiet",
                                  "help",
                                  "version"])
     except getopt.GetoptError:
@@ -68,6 +68,9 @@ def process_args(args):
         elif opt in ("-l", "--links"):
             global SOFTLINKS
             SOFTLINKS = True
+        elif opt in ("-q", "--quiet"):
+            global QUIET
+            QUIET = True
         elif opt in ("-s", "--source"):
             global SOURCE_DIR
             SOURCE_DIR = os.path.abspath(arg)
@@ -78,9 +81,6 @@ def process_args(args):
             global IGNORE_SET
             for i in str(arg).split(','):
                 IGNORE_SET.add(i.lstrip())
-        elif opt in ("-q", "--quiet"):
-            global QUIET
-            QUIET = True
         elif opt in ("-h", "--help"):
             print(help_message)
             sys.exit(0)

@@ -53,7 +53,7 @@ def process_args(args):
                                  "source=",
                                  "target=",
                                  "ignore=",
-                                 "quiet"
+                                 "quiet",
                                  "help"])
     except getopt.GetoptError:
         print(help_message)

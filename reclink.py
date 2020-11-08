@@ -85,7 +85,7 @@ def process_args(args):
             print(help_message)
             sys.exit(0)
         elif opt in ("-v", "--version"):
-            print("reclink 1.0")
+            print("reclink 1.1")
             sys.exit(0)
 
 
@@ -131,11 +131,10 @@ if __name__ == '__main__':
 
     process_args(sys.argv[1:])
 
-    print('source: ' + str(SOURCE_DIR))
-    print('target: ' + str(TARGET_DIR))
-    print('ignore: ' + str(sorted(IGNORE_SET)))
-
     if not QUIET:
+        print('source: ' + str(SOURCE_DIR))
+        print('target: ' + str(TARGET_DIR))
+        print('ignore: ' + str(sorted(IGNORE_SET)))
         input('press enter to confirm')
 
     if not os.path.isdir(SOURCE_DIR):
@@ -144,6 +143,10 @@ if __name__ == '__main__':
 
     if not os.path.isdir(TARGET_DIR):
         logging.error('target is not a directory: ' + TARGET_DIR)
+        sys.exit(2)
+
+    if SOURCE_DIR == TARGET_DIR:
+        logging.error('source and target directory can not be the same')
         sys.exit(2)
 
     for root, _, files in os.walk(SOURCE_DIR):

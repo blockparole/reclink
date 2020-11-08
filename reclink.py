@@ -44,17 +44,19 @@ def process_args(args):
 -t, --target {{PATH}}       path to target directory
 -i, --ignore {{PATH,PATH}}  relative paths to be ignored
 -q, --quiet                 skip user confirmation
--h, --help                  display this help message and exit"""
+-h, --help                  display this help message and exit
+-v, --version               display version message and exit"""
     try:
         opts, _ = getopt.getopt(args,
-                                "rls:t:i:qh",
+                                "rls:t:i:qhv",
                                 ["replace",
                                  "links",
                                  "source=",
                                  "target=",
                                  "ignore=",
                                  "quiet",
-                                 "help"])
+                                 "help",
+                                 "version"])
     except getopt.GetoptError:
         print(help_message)
         sys.exit(2)
@@ -81,6 +83,9 @@ def process_args(args):
             QUIET = True
         elif opt in ("-h", "--help"):
             print(help_message)
+            sys.exit(0)
+        elif opt in ("-v", "--version"):
+            print("reclink 1.0")
             sys.exit(0)
 
 

@@ -38,21 +38,23 @@ def removesuffix(text: str, suffix: str) -> str:
 def parse_args():
     parser = argparse.ArgumentParser(prog='reclink')
 
-    parser.add_argument(
+    required = parser.add_argument_group('required arguments')
+
+    required.add_argument(
         '-s', '--source',
         action='store',
         type=str,
         required=True,
-        metavar='path',
+        metavar='PATH',
         help='path to source directory'
     )
 
-    parser.add_argument(
+    required.add_argument(
         '-t', '--target',
         action='store',
         type=str,
         required=True,
-        metavar='path',
+        metavar='PATH',
         help='path to target directory'
     )
 
@@ -62,7 +64,7 @@ def parse_args():
         type=str,
         nargs='+',
         required=False,
-        metavar='path',
+        metavar='PATH',
         help='relative paths to be ignored'
     )
 
@@ -134,8 +136,9 @@ if __name__ == '__main__':
 
     SOURCE_DIR = args.source
     TARGET_DIR = args.target
-    for i in args.ignore:
-        IGNORE_SET.add(i)
+    if args.ignore is not None:
+        for i in args.ignore:
+            IGNORE_SET.add(i)
     REPLACE = args.replace
     LINKS = args.links
     QUIET = args.quiet

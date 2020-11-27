@@ -43,6 +43,7 @@ def parse_args():
         action='store',
         type=str,
         required=True,
+        metavar='path',
         help='path to source directory'
     )
 
@@ -51,6 +52,7 @@ def parse_args():
         action='store',
         type=str,
         required=True,
+        metavar='path',
         help='path to target directory'
     )
 
@@ -60,6 +62,7 @@ def parse_args():
         type=str,
         nargs='+',
         required=False,
+        metavar='path',
         help='relative paths to be ignored'
     )
 

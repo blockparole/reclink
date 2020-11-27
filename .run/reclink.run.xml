@@ -13,7 +13,7 @@
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/reclink.py" />
     <option name="PARAMETERS"
-            value="-rlq --source test/source/ --target test/target --ignore &quot;.git, .gitignore, .idea, full/hard, .run/reclink.run.xml&quot;"/>
+            value="-rlq --source test/source/ --target test/target --ignore &quot;.git&quot; &quot;.gitignore&quot; &quot;.idea&quot; &quot;full/hard&quot; -i &quot;.run/reclink.run.xml&quot;"/>
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />

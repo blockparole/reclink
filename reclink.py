@@ -5,18 +5,17 @@ if sys.version_info.major != 3:
     print('please run with python 3')
     sys.exit(1)
 
-from pathlib import Path
 import os
 import logging
-import getopt
+import argparse
 
 logging.basicConfig(format='%(levelname)s %(message)s', level=logging.INFO)
 
-SOURCE_DIR = str(Path().absolute())
-TARGET_DIR = str(os.environ['HOME'])
+SOURCE_DIR = str()
+TARGET_DIR = str()
 IGNORE_SET = {os.path.basename(__file__)}
 REPLACE = False
-SOFTLINKS = False
+LINKS = False
 QUIET = False
 
 
@@ -36,62 +35,61 @@ def removesuffix(text: str, suffix: str) -> str:
         return text[:]
 
 
-def process_args(args):
-    help_message = """reclink - link files recursively
--r, --replace               replace existing targets
--l, --links                 link to softlinks
--q, --quiet                 skip user confirmation
--s, --source {{PATH}}       path to source directory
--t, --target {{PATH}}       path to target directory
--i, --ignore {{PATH,PATH}}  relative paths to be ignored
--h, --help                  display this help message and exit
--v, --version               display version message and exit"""
-    try:
-        opts, _ = getopt.getopt(args,
-                                "rlqs:t:i:hv",
-                                ["replace",
-                                 "links",
-                                 "quiet",
-                                 "source=",
-                                 "target=",
-                                 "ignore=",
-                                 "help",
-                                 "version"])
-    except getopt.GetoptError:
-        print(help_message)
-        sys.exit(2)
+def parse_args():
+    parser = argparse.ArgumentParser(prog='reclink')
 
-    for opt, arg in opts:
-        if opt in ("-r", "--replace"):
-            global REPLACE
-            REPLACE = True
-        elif opt in ("-l", "--links"):
-            global SOFTLINKS
-            SOFTLINKS = True
-        elif opt in ("-q", "--quiet"):
-            global QUIET
-            QUIET = True
-        elif opt in ("-s", "--source"):
-            global SOURCE_DIR
-            SOURCE_DIR = os.path.abspath(arg)
-        elif opt in ("-t", "--target"):
-            global TARGET_DIR
-            TARGET_DIR = os.path.abspath(arg)
-        elif opt in ("-i", "--ignore"):
-            global IGNORE_SET
-            for i in str(arg).split(','):
-                IGNORE_SET.add(i.lstrip())
-        elif opt in ("-h", "--help"):
-            print(help_message)
-            sys.exit(0)
-        elif opt in ("-v", "--version"):
-            print("reclink 1.1")
-            sys.exit(0)
+    parser.add_argument(
+        '-s', '--source',
+        action='store',
+        type=str,
+        required=True,
+        help='path to source directory'
+    )
+
+    parser.add_argument(
+        '-t', '--target',
+        action='store',
+        type=str,
+        required=True,
+        help='path to target directory'
+    )
+
+    parser.add_argument(
+        '-i', '--ignore',
+        action='extend',
+        type=str,
+        nargs='+',
+        required=False,
+        help='relative paths to be ignored'
+    )
+
+    parser.add_argument(
+        '-r', '--replace',
+        action='store_true',
+        required=False,
+        help='replace existing targets'
+    )
+
+    parser.add_argument(
+        '-l', '--links',
+        action='store_true',
+        required=False,
+        help='link to softlinks'
+    )
+
+    parser.add_argument(
+        '-q', '--quiet',
+        action='store_true',
+        required=False,
+        help='skip user confirmation'
+    )
+
+    return parser.parse_args()
 
 
 def link_file(source: str):
     # check source
-    if not SOFTLINKS and os.path.islink(source):
+    if not LINKS and os.path.islink(source):
         logging.warning('skipping link, source is a link: ' + source)
         return
     # absolute path
@@ -129,9 +127,17 @@ def is_ignored(abs_path: str):
 
 if __name__ == '__main__':
 
-    process_args(sys.argv[1:])
+    args = parse_args()
 
-    if not QUIET:
+    SOURCE_DIR = args.source
+    TARGET_DIR = args.target
+    for i in args.ignore:
+        IGNORE_SET.add(i)
+    REPLACE = args.replace
+    LINKS = args.links
+    QUIET = args.quiet
+
+    if not args.quiet:
         print('source: ' + str(SOURCE_DIR))
         print('target: ' + str(TARGET_DIR))
         print('ignore: ' + str(sorted(IGNORE_SET)))

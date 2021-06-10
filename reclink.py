@@ -85,7 +85,7 @@ def parse_args():
         '-d', '--dry',
         action='store_true',
         required=False,
-        help='dry run'
+        help='skip actual changes to filesystem'
     )
 
     return parser.parse_args()

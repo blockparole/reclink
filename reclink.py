@@ -159,11 +159,11 @@ if __name__ == '__main__':
 
     for root, _, files in os.walk(SOURCE_DIR):
         if is_ignored(root):
-            logging.info('ignoring folder: ' + str(root))
+            logging.debug('ignoring folder: ' + str(root))
             continue
         for f in files:
             path = os.path.abspath(root + os.sep + f)
             if is_ignored(path):
-                logging.info('ignoring file: ' + str(path))
+                logging.debug('ignoring file: ' + str(path))
                 continue
             link_file(path)

@@ -9,5 +9,6 @@ reclink - link files recursively
 -h, --help                        display this help message and exit
 ```
 ```
-./reclink.py -rq --source "/wormhole/dotfiles" --target "/home/user" --ignore ".git" "foo/bar"
+./reclink.py --source . --target "$HOME" --replace --quiet --ignore ".git" "foo.sh"
+./reclink.py  -s      .  -t      "$HOME"  -r        -q      -i      ".git" "foo.sh"
 ```

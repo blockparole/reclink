@@ -15,8 +15,7 @@ SOURCE_DIR = str()
 TARGET_DIR = str()
 IGNORE_SET = {os.path.basename(__file__)}
 REPLACE = False
-LINKS = False
-QUIET = False
+DRY = False
 
 
 # https://www.python.org/dev/peps/pep-0616/#specification
@@ -76,27 +75,23 @@ def parse_args():
     )
 
     parser.add_argument(
-        '-l', '--links',
-        action='store_true',
-        required=False,
-        help='link to softlinks'
-    )
-
-    parser.add_argument(
         '-q', '--quiet',
         action='store_true',
         required=False,
         help='skip user confirmation'
     )
 
+    parser.add_argument(
+        '-d', '--dry',
+        action='store_true',
+        required=False,
+        help='dry run'
+    )
+
     return parser.parse_args()
 
 
 def link_file(source: str):
-    # check source
-    if not LINKS and os.path.islink(source):
-        logging.warning('skipping link, source is a link: ' + source)
-        return
     # absolute path
     target = os.path.abspath(TARGET_DIR + os.sep + removeprefix(text=source, prefix=SOURCE_DIR))
     # check target
@@ -108,18 +103,20 @@ def link_file(source: str):
             logging.warning('skipping link, target is a directory: ' + target)
             return
         elif os.path.isfile(target) or os.path.islink(target):
-            os.remove(target)
+            if not DRY:
+                os.remove(target)
     else:
         if not os.path.isdir(os.path.abspath(target + os.sep + '..')):
             logging.info('creating directories for file: ' + target)
-            try:
-                os.makedirs(removesuffix(target, os.path.basename(os.sep + target)), mode=0o755, exist_ok=True)
-            except FileExistsError:
-                logging.warning('unable to create directory at: ' + os.path.abspath(target + os.sep + '..'))
-                return
+            if not DRY:
+                try:
+                    os.makedirs(removesuffix(text=target, suffix=os.path.basename(os.sep + target)), mode=0o755, exist_ok=True)
+                except FileExistsError:
+                    logging.warning('unable to create directory at: ' + os.path.abspath(target + os.sep + '..'))
+                    return
     logging.info('linking file: ' + source + ' to ' + target)
-    # create softlink
-    os.symlink(source, target)
+    if not DRY:
+        os.symlink(source, target)
 
 
 def is_ignored(abs_path: str):
@@ -134,14 +131,13 @@ if __name__ == '__main__':
 
     args = parse_args()
 
-    SOURCE_DIR = args.source
-    TARGET_DIR = args.target
+    SOURCE_DIR = os.path.abspath(args.source)
+    TARGET_DIR = os.path.abspath(args.target)
     if args.ignore is not None:
         for i in args.ignore:
             IGNORE_SET.add(i)
     REPLACE = args.replace
-    LINKS = args.links
-    QUIET = args.quiet
+    DRY = args.dry
 
     if not args.quiet:
         print('source: ' + str(SOURCE_DIR))

@@ -4,8 +4,8 @@ reclink - link files recursively
 -t, --target {{PATH}}             path to target directory
 -i, --ignore {{PATH}} {{PATH}}    relative paths to be ignored
 -r, --replace                     replace existing targets
--l, --links                       link to softlinks
 -q, --quiet                       skip user confirmation
+-d, --dry                         skip actual changes to filesystem
 -h, --help                        display this help message and exit
 ```
 ```
